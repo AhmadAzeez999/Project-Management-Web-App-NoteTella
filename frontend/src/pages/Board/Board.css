@@ -1,0 +1,108 @@
+.board 
+{
+    padding: 20px;
+    height: 100vh;
+}
+
+.controls 
+{
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.add-note-btn 
+{
+    padding: 8px 12px;
+    background-color: #001D3D;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.add-note-btn:hover 
+{
+    background-color: #457bb4;
+}
+
+.whiteboard 
+{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    border: 1px solid #979797;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sticky-note 
+{
+    position: absolute;
+    width: 250px;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: move;
+}
+
+.bg-yellow 
+{
+    background-color: #fffbcc;
+}
+
+.bg-green 
+{
+    background-color: #ccffd1;
+}
+
+.bg-blue 
+{
+    background-color: #cce5ff;
+}
+
+.bg-pink 
+{
+    background-color: #ffd1dc;
+}
+
+.note-header 
+{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.note-body 
+{
+    height: auto;
+    width: inherit;
+}
+
+.note-body textarea
+{
+    background-color: transparent;
+    border-width: 0;
+    resize: none;
+    min-height: 150px;
+    height: auto;
+    box-sizing: border-box;
+    width: inherit;
+}
+
+.delete-note-btn 
+{
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+}
+
+.delete-note-btn:hover 
+{
+    color: #ff5252;
+}
+
+.whiteboard-canvas
+{
+    border-width: 1px;
+}
