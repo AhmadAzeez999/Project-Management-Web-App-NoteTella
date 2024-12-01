@@ -1,5 +1,6 @@
 .sidebar
 {
+    margin-top: 70px;
     width: 150px;
     height: 100vh;
     background-color: #003566;
@@ -7,11 +8,6 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-}
-
-.sidebar h1
-{
-    color: #f4f4f4;
 }
 
 .sidebar a

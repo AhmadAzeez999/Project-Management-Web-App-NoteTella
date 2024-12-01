@@ -1,0 +1,30 @@
+.header
+{
+    width: 100%;
+    background-color: #003566;
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    z-index: 10;
+}
+
+.header h1
+{
+    color: #f4f4f4;
+}
+
+.header-btn
+{
+    padding: 8px 12px 8px 12px;
+    margin-left: 10px;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    border: none;
+    cursor: pointer;
+}
+
+.savenload
+{
+    margin-right: 100px;
+}

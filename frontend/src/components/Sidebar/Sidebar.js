@@ -1,14 +1,14 @@
 import React from 'react';
 import './Sidebar.css';
+import { Link } from 'react-router-dom';
 
 const Sidebar = () =>
 {
     return (
         <div className="sidebar">
-            <h1>NoteTella</h1>
-            <a href="/">Dashboard</a>
-            <a href="/board">Board</a>
-            <a href="/time-line">Timeline</a>
+            <Link to="/">Dashboard</Link>
+            <Link to="/board">Board</Link>
+            <Link to="/timeline">Timeline</Link>
         </div>
     );
 };
