@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Board.css';
 import Brush from './Tools/Brush';
 import { useGlobalState } from '../../contexts/GlobalStateProvider';
+import { useSocket } from '../../contexts/SocketProvider';
 
 const Board = () => 
 {
@@ -13,6 +14,31 @@ const Board = () =>
     const { globalData, setGlobalData } = useGlobalState();
     const { notes, drawing } = globalData;
 
+    const socket = useSocket();
+
+    // Synchronize notes and drawing from server
+    useEffect(() => 
+    {
+        // Listen for notes updates
+        socket.on("notes-updated", (updatedNotes) => 
+        {
+            setGlobalData((prev) => ({ ...prev, notes: updatedNotes }));
+            // socket.emit("update-notes", updatedNotes);
+        });
+
+        // Listen for drawing updates
+        socket.on("drawing-updated", (updatedDrawing) => 
+        {
+            setGlobalData((prev) => ({ ...prev, drawing: updatedDrawing }));
+        });
+
+        return () => 
+        {
+            socket.off("notes-updated");
+            socket.off("drawing-updated");
+        };
+    }, [socket, setGlobalData]);
+
     const handleDragStart = (e, note) => 
     {
         if (isTextareaFocused) return;
@@ -22,7 +48,8 @@ const Board = () =>
 
     const handleDrag = (e) => 
     {
-        if (!isDragging || !draggedNote) return;
+        if (!isDragging || !draggedNote)
+            return;
 
         const updatedNotes = notes.map((note) => 
         {
@@ -34,6 +61,8 @@ const Board = () =>
         });
 
         setGlobalData((prev) => ({ ...prev, notes: updatedNotes }));
+
+        socket.emit("update-notes", updatedNotes);
     };
 
     const handleDragEnd = () => 
@@ -48,7 +77,10 @@ const Board = () =>
         const randomColor = colors[Math.floor(Math.random() * colors.length)];
         const newNote = { id: Date.now(), text: "New sticky note", x: 100, y: 100, color: randomColor };
 
-        setGlobalData((prev) => ({ ...prev, notes: [...notes, newNote] }));
+        const updatedNotes = [...notes, newNote];
+        setGlobalData((prev) => ({ ...prev, notes: updatedNotes }));
+
+        socket.emit("update-notes", updatedNotes)
     };
 
     const deleteNote = (id) => 
@@ -69,6 +101,8 @@ const Board = () =>
         });
 
         setGlobalData((prev) => ({ ...prev, notes: updatedNotes }));
+
+        socket.emit("update-notes", updatedNotes);
     };
 
     const toggleMode = () => 

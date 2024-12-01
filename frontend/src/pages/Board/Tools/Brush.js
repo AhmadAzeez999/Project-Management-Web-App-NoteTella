@@ -1,9 +1,12 @@
 import React, { useRef, useEffect, useCallback } from 'react';
+import { useSocket } from '../../../contexts/SocketProvider';
 
 const Brush = ({ mode, drawing, setDrawing }) => 
 {
     const canvasRef = useRef(null);
     const isDrawing = useRef(false); // Keeps track of whether the user is currently drawing
+
+    const socket = useSocket();
 
     // Function to handle the brush drawing logic
     const handleMouseDown = (e) =>
@@ -17,6 +20,9 @@ const Brush = ({ mode, drawing, setDrawing }) =>
         ctx.beginPath();
         ctx.moveTo(offsetX, offsetY);
         isDrawing.current = true;
+
+        // Emitting the starting point
+        socket.emit("drawing-data", { type: "begin", x: offsetX, y: offsetY });
     };
 
     const handleMouseMove = (e) =>
@@ -29,6 +35,9 @@ const Brush = ({ mode, drawing, setDrawing }) =>
         const { offsetX, offsetY } = e.nativeEvent;
         ctx.lineTo(offsetX, offsetY);
         ctx.stroke();
+
+        // Emit the drawing coordinates
+        socket.emit("drawing-data", { type: "draw", x: offsetX, y: offsetY });
     };
 
     const handleMouseUp = () => 
@@ -74,9 +83,48 @@ const Brush = ({ mode, drawing, setDrawing }) =>
 
     useEffect(() =>
     {
-        console.log("Here");
         loadDrawing(); // Loading the drawing when the component mounts or when drawing changes
     }, [drawing, loadDrawing]);
+
+    // Listen for real-time drawing updates from the server
+    useEffect(() => 
+    {
+        socket.on("drawing-data", (data) =>
+        {
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext('2d');
+
+            if (data.type === "begin")
+            {
+                ctx.beginPath();
+                ctx.moveTo(data.x, data.y);
+            } 
+            else if (data.type === "draw")
+            {
+                ctx.lineTo(data.x, data.y);
+                ctx.stroke();
+            }
+        });
+
+        // Listen for a saved drawing being sent
+        socket.on("load-drawing", (dataURL) =>
+        {
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.src = dataURL;
+            img.onload = () =>
+            {
+                ctx.drawImage(img, 0, 0);
+            };
+        });
+
+        return () =>
+        {
+            socket.off("drawing-data");
+            socket.off("load-drawing");
+        };
+    }, [socket]);
 
     return (
         <canvas
